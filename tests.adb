@@ -143,7 +143,7 @@ begin
    Put_Line ("TEST 5 — Exception: Modulus Too Small (P <= 2)");
    declare
       Caught : Boolean := False;
-      Dummy  : Public_Key_Type;
+      Dummy  : Public_Key_Type := 0;
    begin
       begin
          Dummy := Generate_Public_Key (2, 5, 1);
@@ -153,7 +153,9 @@ begin
       end;
       Check ("5.1 Setup attempted P=2", True);
       Check ("5.2 Call rejected Invalid_Parameter", Caught);
-      Check ("5.3 Function did not evaluate successfully", Dummy = Dummy); -- suppress warning
+      pragma Warnings (Off, "condition is always True");
+      Check ("5.3 Function did not evaluate successfully", Dummy = 0);
+      pragma Warnings (On, "condition is always True");
    end;
    Put_Line ("");
 
@@ -161,7 +163,7 @@ begin
    Put_Line ("TEST 6 — Exception: Base Too Small (G <= 1)");
    declare
       Caught : Boolean := False;
-      Dummy  : Public_Key_Type;
+      Dummy  : Public_Key_Type := 0;
    begin
       begin
          Dummy := Generate_Public_Key (23, 1, 4);
@@ -171,7 +173,9 @@ begin
       end;
       Check ("6.1 Setup attempted G=1", True);
       Check ("6.2 Call rejected Invalid_Parameter", Caught);
-      Check ("6.3 Prevented trivial group generation", Dummy = Dummy);
+      pragma Warnings (Off, "condition is always True");
+      Check ("6.3 Prevented trivial group generation", Dummy = 0);
+      pragma Warnings (On, "condition is always True");
    end;
    Put_Line ("");
 
@@ -179,7 +183,7 @@ begin
    Put_Line ("TEST 7 — Exception: Base Too Large (G >= P-1)");
    declare
       Caught : Boolean := False;
-      Dummy  : Public_Key_Type;
+      Dummy  : Public_Key_Type := 0;
    begin
       begin
          Dummy := Generate_Public_Key (23, 22, 4);
@@ -189,7 +193,9 @@ begin
       end;
       Check ("7.1 Setup attempted G=22 for P=23", True);
       Check ("7.2 Call rejected Invalid_Parameter", Caught);
-      Check ("7.3 Forced G to be strictly inside group bounds", Dummy = Dummy);
+      pragma Warnings (Off, "condition is always True");
+      Check ("7.3 Forced G to be strictly inside group bounds", Dummy = 0);
+      pragma Warnings (On, "condition is always True");
    end;
    Put_Line ("");
 
@@ -197,7 +203,7 @@ begin
    Put_Line ("TEST 8 — Exception: Private Key Zero");
    declare
       Caught : Boolean := False;
-      Dummy  : Public_Key_Type;
+      Dummy  : Public_Key_Type := 0;
    begin
       begin
          Dummy := Generate_Public_Key (23, 5, 0);
@@ -207,7 +213,9 @@ begin
       end;
       Check ("8.1 Setup attempted Priv=0", True);
       Check ("8.2 Call rejected Invalid_Parameter", Caught);
-      Check ("8.3 Prevented exposing base", Dummy = Dummy);
+      pragma Warnings (Off, "condition is always True");
+      Check ("8.3 Prevented exposing base", Dummy = 0);
+      pragma Warnings (On, "condition is always True");
    end;
    Put_Line ("");
 
@@ -215,7 +223,7 @@ begin
    Put_Line ("TEST 9 — Exception: Private Key Too Large (Priv >= P-1)");
    declare
       Caught : Boolean := False;
-      Dummy  : Public_Key_Type;
+      Dummy  : Public_Key_Type := 0;
    begin
       begin
          Dummy := Generate_Public_Key (23, 5, 22);
@@ -225,7 +233,9 @@ begin
       end;
       Check ("9.1 Setup attempted Priv=22 for P=23", True);
       Check ("9.2 Call rejected Invalid_Parameter", Caught);
-      Check ("9.3 Bound enforced to P-1", Dummy = Dummy);
+      pragma Warnings (Off, "condition is always True");
+      Check ("9.3 Bound enforced to P-1", Dummy = 0);
+      pragma Warnings (On, "condition is always True");
    end;
    Put_Line ("");
 
@@ -233,7 +243,7 @@ begin
    Put_Line ("TEST 10 — Exception: Public Key Small Subgroup (Pub = 1)");
    declare
       Caught : Boolean := False;
-      Dummy  : Shared_Secret_Type;
+      Dummy  : Shared_Secret_Type := 0;
    begin
       begin
          Dummy := Compute_Shared_Secret (23, 1, 4);
@@ -243,7 +253,9 @@ begin
       end;
       Check ("10.1 Setup attempted malicious Remote_Pub=1", True);
       Check ("10.2 Call rejected Invalid_Public_Key", Caught);
-      Check ("10.3 Defeated subgroup attack of order 1", Dummy = Dummy);
+      pragma Warnings (Off, "condition is always True");
+      Check ("10.3 Defeated subgroup attack of order 1", Dummy = 0);
+      pragma Warnings (On, "condition is always True");
    end;
    Put_Line ("");
 
@@ -251,7 +263,7 @@ begin
    Put_Line ("TEST 11 — Exception: Public Key Small Subgroup (Pub = P-1)");
    declare
       Caught : Boolean := False;
-      Dummy  : Shared_Secret_Type;
+      Dummy  : Shared_Secret_Type := 0;
    begin
       begin
          Dummy := Compute_Shared_Secret (23, 22, 4);
@@ -261,7 +273,9 @@ begin
       end;
       Check ("11.1 Setup attempted malicious Remote_Pub=P-1", True);
       Check ("11.2 Call rejected Invalid_Public_Key", Caught);
-      Check ("11.3 Defeated subgroup attack of order 2", Dummy = Dummy);
+      pragma Warnings (Off, "condition is always True");
+      Check ("11.3 Defeated subgroup attack of order 2", Dummy = 0);
+      pragma Warnings (On, "condition is always True");
    end;
    Put_Line ("");
 
@@ -277,7 +291,9 @@ begin
       -- Just successfully computing this verifies Mod_Mul_Safe works up to 64-bit limits
       Dummy := Generate_Public_Key (P, G, Priv);
       
+      pragma Warnings (Off, "condition is always True");
       Check ("12.1 Max Prime assigned and accepted", P > 18446744073709550000);
+      pragma Warnings (On, "condition is always True");
       Check ("12.2 Safe modular arithmetic did not overflow", Dummy > 0);
       Check ("12.3 Output in valid modulo range", Modulus_Type (Dummy) < P);
    end;
@@ -296,7 +312,7 @@ begin
       
       Check ("13.1 Same inputs", True);
       Check ("13.2 Same outputs", Pub1 = Pub2);
-      Check ("13.3 Value correct (7^13 mod 101 = 20)", Pub1 = 20);
+      Check ("13.3 Value correct (7^13 mod 101 = 75)", Pub1 = 75);
    end;
    Put_Line ("");
 
